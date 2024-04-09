@@ -1,7 +1,8 @@
 import * as crypto from 'crypto';
 
 export interface Product {
-  id: string;
+  id: number;
+  categoryId: number;
   title: string;
   price: number;
   description: string;
