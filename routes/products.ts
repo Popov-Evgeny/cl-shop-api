@@ -1,8 +1,9 @@
 import express from 'express';
-import {ProductWithOutId} from '../types';
 import {imagesUpload} from '../multer';
+import mongoose, {Types} from 'mongoose';
+
+import {ProductMutation} from '../types';
 import Product from '../models/Product';
-import {Types} from 'mongoose';
 
 const productsRouter = express.Router();
 
@@ -44,7 +45,8 @@ productsRouter.post('/', imagesUpload.single('image'), async (req, res, next) =>
       return res.status(422).send({error: 'Fields is required!'});
     }
 
-    const productData: ProductWithOutId = {
+    const productData: ProductMutation = {
+      category: req.body.category,
       title: req.body.title,
       price: req.body.price,
       description: req.body.description,
@@ -56,6 +58,10 @@ productsRouter.post('/', imagesUpload.single('image'), async (req, res, next) =>
 
     return res.send(product);
   } catch (e) {
+    if (e instanceof mongoose.Error.ValidationError) {
+      return res.status(422).send(e);
+    }
+
     next(e);
   }
 });
