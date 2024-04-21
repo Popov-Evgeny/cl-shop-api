@@ -1,3 +1,4 @@
+import {Model} from 'mongoose';
 
 export interface ProductMutation {
   category: string;
@@ -6,3 +7,16 @@ export interface ProductMutation {
   description: string;
   image: string | null;
 }
+
+export interface UserFields {
+  username: string;
+  password: string;
+  token: string;
+}
+
+interface UserMethods {
+  checkPassword(password: string): Promise<boolean>;
+  generateToken(): void;
+}
+
+export type UserModel = Model<UserFields, {}, UserMethods>;

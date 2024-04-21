@@ -5,6 +5,7 @@ import cors from "cors";
 import config from './config';
 import productsRouter from './routes/products';
 import categoriesRouter from './routes/categories';
+import usersRouter from './routes/users';
 
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.static('public'));
 
 app.use('/products', productsRouter);
 app.use('/categories', categoriesRouter);
+app.use('/users', usersRouter);
 
 const run = async () => {
   await mongoose.connect(config.mongoose.db);
