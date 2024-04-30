@@ -19,4 +19,4 @@ interface UserMethods {
   generateToken(): void;
 }
 
-export type UserModel = Model<UserFields, {}, UserMethods>;
+export type UserModel = Model<UserFields, unknown, UserMethods>;
