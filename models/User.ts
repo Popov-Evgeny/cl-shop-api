@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
-import mongoose, {HydratedDocument} from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
-import {UserFields, UserMethods, UserModel} from '../types';
-import {randomUUID} from 'crypto';
+import { UserFields, UserMethods, UserModel } from '../types';
+import { randomUUID } from 'crypto';
 
 const SALT_WORK_FACTOR = 10;
 
@@ -14,14 +14,19 @@ const UserSchema = new Schema<UserFields, UserModel, UserMethods>({
     required: true,
     unique: true,
     validate: {
-      validator: async function (this: HydratedDocument<UserFields>, username: string): Promise<boolean>  {
+      validator: async function (
+        this: HydratedDocument<UserFields>,
+        username: string,
+      ): Promise<boolean> {
         if (!this.isModified('username')) return true;
 
-        const user: HydratedDocument<UserFields> | null = await User.findOne({username});
-        return !Boolean(user);
+        const user: HydratedDocument<UserFields> | null = await User.findOne({
+          username,
+        });
+        return !user;
       },
-      message: 'This user is already registered!'
-    }
+      message: 'This user is already registered!',
+    },
   },
   password: {
     type: String,
@@ -30,18 +35,18 @@ const UserSchema = new Schema<UserFields, UserModel, UserMethods>({
   token: {
     type: String,
     required: true,
-  }
+  },
 });
 
-UserSchema.methods.checkPassword = function(password: string)  {
+UserSchema.methods.checkPassword = function (password: string) {
   return bcrypt.compare(password, this.password);
-}
+};
 
 UserSchema.methods.generateToken = function () {
   this.token = randomUUID();
-}
+};
 
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
   }
@@ -54,10 +59,10 @@ UserSchema.pre('save', async function(next) {
 });
 
 UserSchema.set('toJSON', {
-  transform: (_doc, ret, _options) => {
+  transform: (_doc, ret) => {
     delete ret.password;
     return ret;
-  }
+  },
 });
 
 const User = mongoose.model<UserFields, UserModel>('User', UserSchema);

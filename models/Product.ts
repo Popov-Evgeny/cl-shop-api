@@ -1,9 +1,10 @@
-import mongoose, {Types} from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import Category from './Category';
 
 const Schema = mongoose.Schema;
 
-const ProductSchema = new Schema({
+const ProductSchema = new Schema(
+  {
     title: {
       type: String,
       required: true,
@@ -24,12 +25,13 @@ const ProductSchema = new Schema({
           return Boolean(category);
         },
         message: 'Category does not exist!',
-      }
-    }
+      },
+    },
   },
   {
-    versionKey: false
-  });
+    versionKey: false,
+  },
+);
 
 const Product = mongoose.model('Product', ProductSchema);
 

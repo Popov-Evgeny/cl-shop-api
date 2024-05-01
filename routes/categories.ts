@@ -1,6 +1,6 @@
 import express from 'express';
 import Category from '../models/Category';
-import mongoose, {mongo} from 'mongoose';
+import mongoose, { mongo } from 'mongoose';
 
 const categoriesRouter = express.Router();
 
@@ -18,7 +18,7 @@ categoriesRouter.post('/', async (req, res, next) => {
     const categoryData = {
       title: req.body.title,
       description: req.body.description,
-    }
+    };
     const category = new Category(categoryData);
     await category.save();
     return res.send(category);
@@ -28,7 +28,7 @@ categoriesRouter.post('/', async (req, res, next) => {
     }
 
     if (e instanceof mongo.MongoServerError && e.code === 11000) {
-      return res.status(422).send({message: 'Title should be unique!'});
+      return res.status(422).send({ message: 'Title should be unique!' });
     }
     next(e);
   }

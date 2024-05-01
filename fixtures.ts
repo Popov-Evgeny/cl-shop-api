@@ -1,13 +1,16 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import config from './config';
 import Category from './models/Category';
 import Product from './models/Product';
 import User from './models/User';
 
-const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
+const dropCollection = async (
+  db: mongoose.Connection,
+  collectionName: string,
+) => {
   try {
     await db.dropCollection(collectionName);
-  } catch(e) {
+  } catch (e) {
     console.log(`Collection ${collectionName} was missing, skipping drop...`);
   }
 };
@@ -22,25 +25,31 @@ const run = async () => {
     await dropCollection(db, collection);
   }
 
-  const [cpuCategory, ssdCategory] = await Category.create({
-    title: 'CPUs',
-    description: 'Central Processing Units',
-  },{
-    title: 'SSDs',
-    description: 'Solid State Drives',
-  });
+  const [cpuCategory, ssdCategory] = await Category.create(
+    {
+      title: 'CPUs',
+      description: 'Central Processing Units',
+    },
+    {
+      title: 'SSDs',
+      description: 'Solid State Drives',
+    },
+  );
 
-  await Product.create({
-    title: 'Intel Core i7',
-    price: 450,
-    category: cpuCategory,
-    image: 'fixtures/cpu.jpg',
-  },{
-    title: 'Samsung 990 Pro 1TB',
-    price: 150,
-    category: ssdCategory,
-    image: 'fixtures/ssd.jpg',
-  });
+  await Product.create(
+    {
+      title: 'Intel Core i7',
+      price: 450,
+      category: cpuCategory,
+      image: 'fixtures/cpu.jpg',
+    },
+    {
+      title: 'Samsung 990 Pro 1TB',
+      price: 150,
+      category: ssdCategory,
+      image: 'fixtures/ssd.jpg',
+    },
+  );
 
   await User.create({
     username: 'user',

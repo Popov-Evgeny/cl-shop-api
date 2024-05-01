@@ -1,6 +1,7 @@
-import {Schema, model} from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const CategorySchema = new Schema({
+const CategorySchema = new Schema(
+  {
     title: {
       type: String,
       required: true,
@@ -9,8 +10,9 @@ const CategorySchema = new Schema({
     description: String,
   },
   {
-    versionKey: false
-  });
+    versionKey: false,
+  },
+);
 
 const Category = model('Category', CategorySchema);
 

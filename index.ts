@@ -1,12 +1,11 @@
-import express from "express";
+import express from 'express';
 import mongoose from 'mongoose';
-import cors from "cors";
+import cors from 'cors';
 
 import config from './config';
 import productsRouter from './routes/products';
 import categoriesRouter from './routes/categories';
 import usersRouter from './routes/users';
-
 
 const app = express();
 const port = 8000;
