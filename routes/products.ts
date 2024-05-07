@@ -4,6 +4,8 @@ import mongoose, { Types } from 'mongoose';
 
 import { ProductMutation } from '../types';
 import Product from '../models/Product';
+import auth, { RequestWithUser } from '../middleware/auth';
+import permit from '../middleware/permit';
 
 const productsRouter = express.Router();
 
@@ -41,8 +43,10 @@ productsRouter.get('/:id', async (req, res, next) => {
 
 productsRouter.post(
   '/',
+  auth,
+  permit('admin'),
   imagesUpload.single('image'),
-  async (req, res, next) => {
+  async (req: RequestWithUser, res, next) => {
     try {
       if (!req.body.title || !req.body.price) {
         return res.status(422).send({ error: 'Fields is required!' });

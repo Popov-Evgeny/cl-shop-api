@@ -51,11 +51,20 @@ const run = async () => {
     },
   );
 
-  await User.create({
-    username: 'user',
-    password: '123Qwerty%',
-    token: crypto.randomUUID(),
-  });
+  await User.create(
+    {
+      username: 'user',
+      password: '123Qwerty%',
+      token: crypto.randomUUID(),
+      role: 'client',
+    },
+    {
+      username: 'admin',
+      password: '123Qwerty%',
+      token: crypto.randomUUID(),
+      role: 'admin',
+    },
+  );
 
   await db.close();
 };
