@@ -9,10 +9,12 @@ export interface ProductMutation {
 }
 
 export interface UserFields {
-  username: string;
+  email: string;
   password: string;
   token: string;
   role: string;
+  displayName?: string;
+  googleID?: string;
 }
 
 interface UserMethods {
