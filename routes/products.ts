@@ -1,5 +1,5 @@
 import express from 'express';
-import { imagesUpload } from '../multer';
+import { clearImages, imagesUpload } from '../multer';
 import mongoose, { Types } from 'mongoose';
 
 import { ProductMutation } from '../types';
@@ -29,7 +29,10 @@ productsRouter.get('/:id', async (req, res, next) => {
       return res.status(404).send({ error: 'Wrong ObjectId' });
     }
 
-    const product = await Product.findOne({ _id });
+    const product = await Product.findById({ _id }).populate(
+      'category',
+      '_id title description',
+    );
 
     if (!product) {
       return res.status(404).send({ error: 'Not found!' });
@@ -43,8 +46,8 @@ productsRouter.get('/:id', async (req, res, next) => {
 
 productsRouter.post(
   '/',
-  auth,
-  permit('admin'),
+  // auth,
+  // permit('admin'),
   imagesUpload.single('image'),
   async (req: RequestWithUser, res, next) => {
     try {
@@ -65,10 +68,72 @@ productsRouter.post(
 
       return res.send(product);
     } catch (e) {
+      if (req.file) {
+        clearImages(req.file.filename);
+      }
+
       if (e instanceof mongoose.Error.ValidationError) {
         return res.status(422).send(e);
       }
 
+      next(e);
+    }
+  },
+);
+
+productsRouter.patch(
+  '/:id',
+  auth,
+  permit('admin'),
+  imagesUpload.single('image'),
+  async (req, res, next) => {
+    try {
+      if (!req.body.title || !req.body.price) {
+        return res.status(422).send({ error: 'Fields is required!' });
+      }
+
+      const product = await Product.findById({ _id: req.params.id });
+
+      if (!product) {
+        return res.status(422).send({ error: 'Not found' });
+      }
+
+      let image: string | null = null;
+
+      if (req.body.isDeletedImage === 'delete' && product.image) {
+        clearImages(product.image);
+      }
+
+      if (req.file) {
+        image = req.file.filename;
+      }
+
+      const result = await Product.updateOne(
+        { _id: req.params.id },
+        {
+          $set: {
+            title: req.body.title,
+            category: req.body.category,
+            price: parseFloat(req.body.price),
+            description: req.body.description,
+            image,
+          },
+        },
+      );
+
+      if (result.matchedCount === 0) {
+        return res.status(404).send({ error: 'Not found!' });
+      }
+
+      return res.send({ message: 'ok!' });
+    } catch (e) {
+      if (req.file) {
+        clearImages(req.file.filename);
+      }
+
+      if (e instanceof mongoose.Error.ValidationError) {
+        return res.status(422).send(e);
+      }
       next(e);
     }
   },
